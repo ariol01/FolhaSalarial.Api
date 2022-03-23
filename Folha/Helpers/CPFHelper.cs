@@ -2,21 +2,8 @@
 
 namespace Folha.Helpers
 {
-    public static class CPFHelper
+    public static class CpfHelper
     {
-        public static string GetCpfCompleto(string documento)
-        {
-            var cpf = documento;
-
-            if (string.IsNullOrEmpty(cpf))
-                return "";
-
-            while (cpf.Length < 11)
-                cpf = "0" + cpf;
-
-            return cpf;
-        }
-
         public static bool Validar(string cpf)
         {
             if (cpf.Length > 11)
@@ -69,11 +56,6 @@ namespace Folha.Helpers
             return true;
         }
 
-        public static string AdicionarMascaraAoCpf(string cpf)
-        {
-            cpf = Regex.Replace(cpf, "[^0-9,]", "");
-
-            return Convert.ToUInt64(cpf).ToString(@"000\.000\.000\-00");
-        }
+       
     }
 }

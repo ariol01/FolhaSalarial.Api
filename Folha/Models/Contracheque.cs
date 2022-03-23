@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
+using Folha.Models.Factories;
 
 namespace Folha.Models
 {
@@ -10,8 +11,8 @@ namespace Folha.Models
         public Contracheque(double totalDeDescontos, double salarioLiquido , Funcionario funcionario)
         {
             TotalDeDescontos = totalDeDescontos;
-            SalarioLiquido = salarioLiquido;            
-            Funcionario = funcionario.MontarFuncionario(funcionario);
+            SalarioLiquido = salarioLiquido;
+            Funcionario = funcionario;
         }
         public string MesDeReferencia = DateTime.Now.ToString("M");
 

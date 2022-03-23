@@ -1,8 +1,5 @@
-﻿using FluentValidation;
-using Folha.Infraestrutura;
+﻿using Folha.Infraestrutura;
 using Folha.Interfaces;
-using Folha.Models;
-using Folha.Models.Validation;
 using Folha.Repositorio;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -27,7 +24,7 @@ namespace Folha
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddTransient<FuncionarioRepositorio>();
+            services.AddTransient<IFuncionarioRepositorio, FuncionarioRepositorio>();
             services.AddDbContext<DataFolhaContext>(x => x.UseInMemoryDatabase("memo"));
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();

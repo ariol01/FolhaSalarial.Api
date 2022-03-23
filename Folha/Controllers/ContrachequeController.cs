@@ -1,4 +1,5 @@
-﻿using Folha.Models;
+﻿using Folha.Interfaces;
+using Folha.Models;
 using Folha.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +11,13 @@ namespace Folha.Controllers
     [ApiController]
     public class ContrachequeController : ControllerBase
     {
-        private readonly FuncionarioRepositorio _funcionarioRepositorio;
-        public ContrachequeController(FuncionarioRepositorio funcionarioRepositorio)
+        private readonly IFuncionarioRepositorio _funcionarioRepositorio;
+
+        public ContrachequeController(IFuncionarioRepositorio funcionarioRepositorio)
         {
             _funcionarioRepositorio = funcionarioRepositorio;
         }
+        
         /// <summary>
         /// Lista o contracheque de um funcionário da to-do List
         /// </summary>
@@ -27,7 +30,7 @@ namespace Folha.Controllers
 
             if (id > 0)
             {
-                var funcionario = await _funcionarioRepositorio.BuscarFuncionarioPorId(id);
+                var funcionario = await _funcionarioRepositorio.BuscarPorId(id);
                 var descontontosTotal = Lancamento.CalcularTotalDeDescontos(funcionario);
                 var salarioLiquido = Lancamento.CalcularSalarioLiquido(funcionario,descontontosTotal);
 

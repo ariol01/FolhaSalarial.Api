@@ -1,6 +1,7 @@
 ﻿using Folha.Helpers;
-using Folha.Models;
-using Folha.Repositorio;
+using Folha.Interfaces;
+using Folha.Models.Dtos;
+using Folha.Models.Factories;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,9 +12,9 @@ namespace Folha.Controllers
     [ApiController]
     public class FuncionarioController : ControllerBase
     {
-        private readonly FuncionarioRepositorio _funcionarioRepositorio;
+        private readonly IFuncionarioRepositorio _funcionarioRepositorio;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public FuncionarioController(FuncionarioRepositorio funcionarioRepositorio, IHttpContextAccessor httpContextAccessor)
+        public FuncionarioController(IFuncionarioRepositorio funcionarioRepositorio, IHttpContextAccessor httpContextAccessor)
         {
             _funcionarioRepositorio = funcionarioRepositorio;
             _httpContextAccessor = httpContextAccessor;
@@ -29,7 +30,7 @@ namespace Folha.Controllers
         {
             if (id > 0)
             {
-                var funcionario = await _funcionarioRepositorio.BuscarFuncionarioPorId(id);
+                var funcionario = await _funcionarioRepositorio.BuscarPorId(id);
 
                 return Ok(funcionario);
             }
@@ -55,26 +56,26 @@ namespace Folha.Controllers
         /// <returns> um item criado to-do List </returns>
         // POST api/<FuncionarioController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Funcionario funcionario)
+        public async Task<IActionResult> Post([FromBody] FuncionarioDto funcionarioDto)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && CpfHelper.Validar(funcionarioDto.Documento))
             {
-                if (CPFHelper.Validar(funcionario.Documento))
-                {
-                    try
-                    {
-                        var caminho = _httpContextAccessor.HttpContext.Request.Host.Value;
-                        await _funcionarioRepositorio.Adicionar(funcionario);
-                        var contracheque = $"https://{caminho}/api/contracheque/{funcionario.Id}";
-                        var retorno = new { funcionario, contracheque };
-                        return Ok(retorno);
-                    }
-                    catch (Exception e)
-                    {
-                        return Problem(e.InnerException.Message);
-                        throw;
-                    }
 
+                try
+                {
+                    var funcionario = FuncionarioFactory.Criar(funcionarioDto);
+                    await _funcionarioRepositorio.Adicionar(funcionario);
+                    
+                    var caminho = _httpContextAccessor.HttpContext.Request.Host.Value;
+                    var contracheque = $"https://{caminho}/api/contracheque/{funcionario.Id}";
+                    var retorno = new { funcionario, contracheque };
+
+                    return Ok(retorno);
+                }
+                catch (Exception e)
+                {
+                    return Problem(e.InnerException.Message);
+                   
                 }
             }
 
@@ -91,11 +92,11 @@ namespace Folha.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromBody] double salarioBruto, int id)
         {
-            if ( id > 0)
+            if (id > 0)
             {
-                var funcioarioObj = await _funcionarioRepositorio.BuscarFuncionarioPorId(id);
+                var funcioarioObj = await _funcionarioRepositorio.BuscarPorId(id);
 
-                if (CPFHelper.Validar(funcioarioObj.Documento))
+                if (CpfHelper.Validar(funcioarioObj.Documento))
                 {
                     try
                     {
@@ -125,7 +126,7 @@ namespace Folha.Controllers
         {
             if (id > 0)
             {
-                var funcionario = await _funcionarioRepositorio.BuscarFuncionarioPorId(id);
+                var funcionario = await _funcionarioRepositorio.BuscarPorId(id);
                 await _funcionarioRepositorio.Remover(funcionario);
                 return Ok(funcionario);
             }
