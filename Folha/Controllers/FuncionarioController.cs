@@ -1,6 +1,7 @@
 ﻿using Folha.Helpers;
 using Folha.Interfaces;
 using Folha.Models.Dtos;
+using Folha.Models.Extensions;
 using Folha.Models.Factories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,13 @@ namespace Folha.Controllers
     {
         private readonly IFuncionarioRepositorio _funcionarioRepositorio;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
         public FuncionarioController(IFuncionarioRepositorio funcionarioRepositorio, IHttpContextAccessor httpContextAccessor)
         {
             _funcionarioRepositorio = funcionarioRepositorio;
             _httpContextAccessor = httpContextAccessor;
+
+
         }
         /// <summary>
         /// Retorna o item da to-do List
@@ -60,13 +64,12 @@ namespace Folha.Controllers
         {
             if (ModelState.IsValid && CpfHelper.Validar(funcionarioDto.Documento))
             {
-
                 try
                 {
                     var funcionario = FuncionarioFactory.Criar(funcionarioDto);
                     await _funcionarioRepositorio.Adicionar(funcionario);
-                    
-                    var caminho = _httpContextAccessor.HttpContext.Request.Host.Value;
+
+                    var caminho = _httpContextAccessor.GerarCaminho();
                     var contracheque = $"https://{caminho}/api/contracheque/{funcionario.Id}";
                     var retorno = new { funcionario, contracheque };
 
@@ -75,7 +78,6 @@ namespace Folha.Controllers
                 catch (Exception e)
                 {
                     return Problem(e.InnerException.Message);
-                   
                 }
             }
 

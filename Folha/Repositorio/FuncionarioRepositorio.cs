@@ -14,10 +14,11 @@ namespace Folha.Repositorio
             _contexto = contexto;
         }
 
-        public async Task Adicionar(Funcionario funcionario)
+        public async Task<int> Adicionar(Funcionario funcionario)
         {
             await _contexto.AddAsync(funcionario);
-           await _contexto.SaveChangesAsync();
+          var retorno = await _contexto.SaveChangesAsync();
+          return retorno;
         }
 
         public async Task<ICollection<Funcionario>> BuscarTodos()

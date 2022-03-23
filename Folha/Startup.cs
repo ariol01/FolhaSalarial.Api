@@ -24,7 +24,7 @@ namespace Folha
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddTransient<IFuncionarioRepositorio, FuncionarioRepositorio>();
+            services.AddScoped<IFuncionarioRepositorio, FuncionarioRepositorio>();
             services.AddDbContext<DataFolhaContext>(x => x.UseInMemoryDatabase("memo"));
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
