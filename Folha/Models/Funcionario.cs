@@ -63,5 +63,14 @@ namespace Folha.Models
             return DataDeAdmissao;
         }
 
+        public void AlterarSalario(double salarioBruto)
+        {
+            if (salarioBruto > 0)
+            {
+
+                SalarioBruto = salarioBruto;
+            }
+        }
+
     }
 }

@@ -15,7 +15,11 @@ namespace Folha.Controllers
         {
             _funcionarioRepositorio = funcionarioRepositorio;
         }
-        
+        /// <summary>
+        /// Lista o contracheque de um funcionário da to-do List
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Retorna o contracheque do funcionário da to-do List</returns>
         // GET api/<ContrachequeController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)

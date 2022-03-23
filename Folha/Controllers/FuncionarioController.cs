@@ -18,6 +18,11 @@ namespace Folha.Controllers
             _funcionarioRepositorio = funcionarioRepositorio;
             _httpContextAccessor = httpContextAccessor;
         }
+        /// <summary>
+        /// Retorna o item da to-do List
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns> O item da to-do List</returns>
         // GET: api/<FuncionarioController>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
@@ -30,7 +35,11 @@ namespace Folha.Controllers
             }
             return NotFound("Funcionário não encontrado");
         }
-
+        /// <summary>
+        /// Lista os itens da To-do list.
+        /// </summary>
+        /// <returns>Os itens da To-do list</returns>
+        /// <response code="200">Returna os itens da To-do list cadastrados</response>
         [HttpGet]
         // GET api/<FuncionarioController>/5
         public async Task<IActionResult> GetAll()
@@ -39,6 +48,11 @@ namespace Folha.Controllers
             return Ok(funcionarios);
         }
 
+        /// <summary>
+        /// Cria um to-do List
+        /// </summary>
+        /// <param name="funcionario"></param>
+        /// <returns> um item criado to-do List </returns>
         // POST api/<FuncionarioController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Funcionario funcionario)
@@ -67,18 +81,27 @@ namespace Folha.Controllers
             return BadRequest("Informe todos os campos obrigatórios corretamente.");
         }
 
+        /// <summary>
+        /// Atualiza o salario da To-do List
+        /// </summary>
+        /// <param name="salarioBruto"></param>
+        /// <param name="id"></param>
+        /// <returns> um item Atualizado da to-do List</returns>
         // PUT api/<FuncionarioController>/5
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] Funcionario funcionario)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromBody] double salarioBruto, int id)
         {
-            if (funcionario is not null)
+            if ( id > 0)
             {
-                if (CPFHelper.Validar(funcionario.Documento))
+                var funcioarioObj = await _funcionarioRepositorio.BuscarFuncionarioPorId(id);
+
+                if (CPFHelper.Validar(funcioarioObj.Documento))
                 {
                     try
                     {
-                        await _funcionarioRepositorio.Atualizar(funcionario);
-                        return Ok($"Atualizado :\n{funcionario}");
+                        funcioarioObj.AlterarSalario(salarioBruto);
+                        await _funcionarioRepositorio.Atualizar(funcioarioObj);
+                        return Ok(funcioarioObj);
                     }
                     catch (Exception e)
                     {
@@ -91,7 +114,11 @@ namespace Folha.Controllers
 
             return BadRequest("Informe todos os campos obrigatórios corretamente.");
         }
-
+        /// <summary>
+        /// Remove um item da to-do List
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns> O item é removido da to-do List</returns>
         // DELETE api/<FuncionarioController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
